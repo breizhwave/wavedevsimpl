@@ -1,6 +1,11 @@
 {
   "name": "wavedevsimpl",
-  "owner": { "name": "breizhwave" },
+  "owner": {
+    "name": "breizhwave"
+  },
+  "metadata": {
+    "description": "The wavedevsimpl skill: a simple, portable PHP + SQLite + vanilla JS web stack."
+  },
   "plugins": [
     {
       "name": "wavedevsimpl",
