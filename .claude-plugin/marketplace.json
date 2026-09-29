@@ -1,0 +1,11 @@
+{
+  "name": "wavedevsimpl",
+  "owner": { "name": "breizhwave" },
+  "plugins": [
+    {
+      "name": "wavedevsimpl",
+      "source": "./",
+      "description": "The simple portable web stack: PHP 8 + SQLite + vanilla JS, no framework, no build, deploy by copying one folder to any shared host."
+    }
+  ]
+}
