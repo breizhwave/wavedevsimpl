@@ -62,7 +62,7 @@ Rules:
 3. **Concurrency-sensitive business rules live in SQL** (conditional `INSERT … SELECT … WHERE`), not in PHP.
 4. **One API endpoint**, prepared statements only, **whitelist** of tables and columns, camelCase ↔ snake_case in one place, private fields **removed server-side** for anonymous visitors.
 5. **Shared admin password** as `password_hash()` in `config.php`; empty hash = nobody is admin. CSRF token in `X-CSRF-Token` on every POST.
-6. **Front-end**: vanilla JS, state object + one render function per view, escape everything from the DB (`textContent` / `esc()`), mobile first, CSS variables with dark mode.
+6. **Front-end**: vanilla JS, state object + one render function per view, escape everything from the DB (`textContent` / `esc()`), mobile first, CSS variables, light theme only (`color-scheme: only light`).
 7. **Test on a copy**: never delete or reset the real database, never overwrite `config.php`.
 
 ## Details — read the matching reference when working on that part

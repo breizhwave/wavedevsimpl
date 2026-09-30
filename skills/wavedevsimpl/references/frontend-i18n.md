@@ -14,7 +14,7 @@ Reference code: youlvat [`index.php`](https://github.com/breizhwave/youlvat/blob
 
 - A small `api(body)` helper: `fetch('api.php', {method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':BOOT.csrf}, body:JSON.stringify(body)})`, shows the server's message in a toast on error, then reloads state.
 - **Mobile first** for public pages; CSS Grid/Flex, simple breakpoints (e.g. 980 px and 560 px), no horizontal scroll.
-- Colours as CSS variables on `:root`, dark theme via `prefers-color-scheme`.
+- Colours as CSS variables on `:root`. Light theme only: no automatic dark theme, and `color-scheme: only light` on `:root` so mobile browsers (Chrome Android auto-dark, Samsung Internet) don't darken the page themselves.
 - Google Fonts only; nothing else loaded from outside.
 - View preferences (view, language) in `localStorage`, always inside `try/catch`.
 - Context in the URL (`?event=<id>`, `?lang=en`): shareable links, working back button.
