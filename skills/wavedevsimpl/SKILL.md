@@ -1,6 +1,6 @@
 ---
 name: wavedevsimpl
-description: Build small, durable web apps with PHP 8 + SQLite (PDO) + vanilla HTML/CSS/JS — no framework, no Composer, no npm, no build step — that deploy by copying one folder to any cheap shared PHP host. Use when the user wants a simple, portable, low-maintenance web tool (association, club, festival, small business, internal tool; tens to hundreds of users), asks for "the simple stack", "wavedevsimpl", something that "runs anywhere" or "on shared hosting / FTP", or wants to avoid Firebase/Supabase/framework lock-in. Covers project layout, SQLite setup and self-migrating schema, a single JSON API with whitelists and CSRF, shared-password admin, vanilla front-end rendering, multilingual UI, local testing and deployment. Not for multi-server, high write-rate, fine-grained user accounts or real-time collaborative apps.
+description: Build small, durable web apps with PHP 8 + SQLite (PDO) + vanilla HTML/CSS/JS — no framework, no Composer, no npm, no build step — that deploy by copying one folder to any cheap shared PHP host. Use when the user wants a simple, portable, low-maintenance web tool (association, club, festival, small business, internal tool; tens to hundreds of users), asks for "the simple stack", "wavedevsimpl", something that "runs anywhere" or "on shared hosting / FTP", or wants to avoid Firebase/Supabase/framework lock-in. Pages are rendered server-side in PHP first, with JavaScript only as a small add-on. Covers project layout, SQLite setup and self-migrating schema, a single JSON API with whitelists and CSRF, shared-password admin, vanilla front-end rendering, multilingual UI, local testing and deployment. Not for multi-server, high write-rate, fine-grained user accounts or real-time collaborative apps.
 ---
 
 # wavedevsimpl — the simple portable stack
@@ -35,9 +35,9 @@ If one of these applies, say so to the user and propose something else.
 
 ```
 app/
-  index.php          main page (HTML + inline JS, reads the API)
+  index.php          main page (HTML rendered by PHP, a little JS only if needed)
   other-page.php     secondary public pages
-  api.php            single JSON API (?action=…)
+  api.php            single JSON API (?action=…), only for the JS parts
   export.php         CSV export / full JSON backup (admin)
   config.php         app name, admin password hash, DSN   (gitignored; ship config.example.php)
   lib/db.php         PDO connection, pragmas, schema creation, migrations
@@ -52,17 +52,31 @@ app/
 
 Rules:
 - **Relative paths everywhere**: the app must work in a subfolder (`https://example.org/myapp/`).
-- Each PHP page is self-contained: a little PHP at the top (session, boot data), then HTML + one `<script>`. No template engine.
+- Each PHP page is self-contained: PHP at the top (session, read data, handle the form POST), then HTML with `<?= h($value) ?>`, and a `<script>` only if the page needs one. No template engine.
 - `.gitignore`: `data/*.sqlite`, `data/*.sqlite-*`, `config.php`.
+
+## PHP first, JavaScript second
+
+**Write the page in PHP by default; add JavaScript only for what PHP cannot do.** The main reason: it is easier to edit for the people who maintain the tool.
+
+- One language to read: open the `.php` file and you see the HTML and the data that fills it.
+- No state duplicated between server and browser, no client-side re-rendering, no API to evolve in step with each screen.
+- Business rules (calculations, checks, permissions) are written **once, in PHP**; JS never re-implements them.
+- "View source" shows the real output; PHP errors land in the server log, not in a phone's console.
+- Pages work without JS, and links/bookmarks work naturally.
+
+So: render HTML in PHP (escape with `h()` = `htmlspecialchars($s, ENT_QUOTES, 'UTF-8')`); plain `<form method="post">` handled by PHP then **POST → redirect → GET**; navigation by real links with GET parameters (`?event=…&tab=…`). Use JS only for instant filtering/toggling, two-click confirmation, clipboard, a rich-text editor, or periodically refreshing one area — always as progressive enhancement. Details and the i18n consequence: [references/frontend-i18n.md](references/frontend-i18n.md).
+
+(The reference app youlvat predates this rule: its pages are still rendered in JS because they were ported from a prototype. Take its PHP libraries, security and SQL as the model, not its JS rendering.)
 
 ## Core rules (always apply)
 
 1. **Every PDO connection**: `ERRMODE_EXCEPTION`, `FETCH_ASSOC`, then `PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000;`
 2. **Zero-install schema**: missing DB → create it from `database/schema.sql`. Schema changes → idempotent `migrate()` run on each connection (`PRAGMA table_info` + `ALTER TABLE … ADD COLUMN`). Unwritable `data/` → clear error message, never a blank page.
 3. **Concurrency-sensitive business rules live in SQL** (conditional `INSERT … SELECT … WHERE`), not in PHP.
-4. **One API endpoint**, prepared statements only, **whitelist** of tables and columns, camelCase ↔ snake_case in one place, private fields **removed server-side** for anonymous visitors.
-5. **Shared admin password** as `password_hash()` in `config.php`; empty hash = nobody is admin. CSRF token in `X-CSRF-Token` on every POST.
-6. **Front-end**: vanilla JS, state object + one render function per view, escape everything from the DB (`textContent` / `esc()`), mobile first, CSS variables, light theme only (`color-scheme: only light`).
+4. **One API endpoint** (for the JS parts only), prepared statements only, **whitelist** of tables and columns, camelCase ↔ snake_case in one place, private fields **removed server-side** for anonymous visitors.
+5. **Shared admin password** as `password_hash()` in `config.php`; empty hash = nobody is admin. CSRF token on every POST (hidden form field, or `X-CSRF-Token` header for `fetch`).
+6. **Front-end**: **PHP renders the HTML**, vanilla JS only as an add-on; escape everything from the DB (`h()` in PHP, `textContent` / `esc()` in JS), mobile first, CSS variables, light theme only (`color-scheme: only light`).
 7. **Test on a copy**: never delete or reset the real database, never overwrite `config.php`.
 
 ## Details — read the matching reference when working on that part
