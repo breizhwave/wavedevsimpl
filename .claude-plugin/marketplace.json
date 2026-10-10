@@ -4,13 +4,13 @@
     "name": "breizhwave"
   },
   "metadata": {
-    "description": "The wavedevsimpl skill: a simple, portable PHP + SQLite + vanilla JS web stack."
+    "description": "The wavedevsimpl skills: a simple, portable PHP + SQLite + vanilla JS web stack, and waveskridcms, a one-shot CMS for static HTML sites."
   },
   "plugins": [
     {
       "name": "wavedevsimpl",
       "source": "./",
-      "description": "The simple portable web stack: PHP 8 + SQLite + vanilla JS, no framework, no build, deploy by copying one folder to any shared host."
+      "description": "The simple portable web stack: PHP 8 + SQLite + vanilla JS, no framework, no build, deploy by copying one folder to any shared host. Includes waveskridcms, a one-shot CMS for static HTML sites."
     }
   ]
 }

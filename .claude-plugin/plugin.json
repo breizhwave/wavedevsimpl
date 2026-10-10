@@ -1,10 +1,23 @@
 {
   "name": "wavedevsimpl",
-  "version": "1.0.0",
-  "description": "The simple portable web stack: PHP 8 + SQLite + vanilla JS, no framework, no build, deploy by copying one folder to any shared host.",
-  "author": { "name": "breizhwave" },
+  "version": "1.1.0",
+  "description": "The simple portable web stack: PHP 8 + SQLite + vanilla JS, no framework, no build, deploy by copying one folder to any shared host. Includes waveskridcms, a one-shot CMS for static HTML sites.",
+  "author": {
+    "name": "breizhwave"
+  },
   "homepage": "https://github.com/breizhwave/wavedevsimpl",
   "repository": "https://github.com/breizhwave/wavedevsimpl",
   "license": "MIT",
-  "keywords": ["php", "sqlite", "vanilla-js", "shared-hosting", "no-build", "skill"]
+  "keywords": [
+    "php",
+    "sqlite",
+    "vanilla-js",
+    "shared-hosting",
+    "no-build",
+    "skill",
+    "cms",
+    "static-site",
+    "seo",
+    "geo"
+  ]
 }
